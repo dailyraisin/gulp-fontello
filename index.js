@@ -32,7 +32,10 @@ function fontello () {
       }
 
       var zipFile;
-      zipFile = needle.get(HOST + "/" + file.toString() + "/get", {open_timeout: 0}, function(error) {
+      zipFile = needle.get(HOST + "/" + file.toString() + "/get", {
+        open_timeout: 0,
+        retry_request: true
+      }, function(error) {
         if (error) {
           throw error;
         }
