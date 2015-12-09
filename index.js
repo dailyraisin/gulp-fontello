@@ -10,7 +10,6 @@ var
   unzip       = require('unzip'),
   path        = require('path'),
   $           = require('gulp-util'),
-  _ = require('underscore');
 
   PluginError = $.PluginError
   ;
@@ -22,6 +21,11 @@ var needleOptions = {
 };
 
 const PLUGIN_NAME = 'gulp-fontello';
+
+function addMultipart (obj) {
+    obj.multipart = true;
+    return obj;
+}
 
 function fontello () {
   "use strict";
@@ -81,8 +85,7 @@ function fontello () {
           file: file.path,
           content_type: 'application/json'
         }
-      }, _.extend({ multipart: true }, needleOptions), 
-      function(error) {
+      }, addMultipart(needleOptions), function(error) {
         if (error) {
           throw error;
         }
