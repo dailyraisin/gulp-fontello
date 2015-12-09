@@ -10,9 +10,16 @@ var
   unzip       = require('unzip'),
   path        = require('path'),
   $           = require('gulp-util'),
+  _ = require('underscore');
 
   PluginError = $.PluginError
   ;
+
+var needleOptions = {
+    open_timeout: 2000,
+    retry_request_on_error_code: ['ECONNRESET', 'ENOTFOUND'],
+    retry_request: true
+};
 
 const PLUGIN_NAME = 'gulp-fontello';
 
@@ -32,10 +39,7 @@ function fontello () {
       }
 
       var zipFile;
-      zipFile = needle.get(HOST + "/" + file.toString() + "/get", {
-        open_timeout: 0,
-        retry_request: true
-      }, function(error) {
+      zipFile = needle.get(HOST + "/" + file.toString() + "/get", needleOptions, function(error) {
         if (error) {
           throw error;
         }
@@ -77,11 +81,7 @@ function fontello () {
           file: file.path,
           content_type: 'application/json'
         }
-      },
-      {
-        multipart: true,
-        open_timeout: 0
-      },
+      }, _.extend({ multipart: true }, needleOptions), 
       function(error) {
         if (error) {
           throw error;
