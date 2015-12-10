@@ -7,9 +7,9 @@ var
 
   needle      = require('needle'),
   through2    = require('through2'),
-  unzip       = require('unzip'),
   path        = require('path'),
   $           = require('gulp-util'),
+  Decompress  = require('decompress'),
 
   PluginError = $.PluginError
   ;
@@ -49,33 +49,43 @@ function fontello () {
         }
       });
 
-      zipFile
-        .pipe(unzip.Parse())
-        .on('entry', function (entry) {
-          var dirName, fileName, pathName, type, _ref, chunks = [];
-          pathName = entry.path, type = entry.type;
-
-          entry.pipe(through2.obj(function (chunk, enc, cb) {
-            chunks.push(chunk);
-            cb();
-          }, function (cb) {
-            if(chunks.length > 0){
-              dirName = (_ref = path.dirname(pathName).match(/\/([^\/]*)$/)) != null ? _ref[1] : void 0;
-              fileName = path.basename(pathName);
-              entry.path = fileName;
-
-              var file = new $.File({
-                cwd : "./",
-                path : (dirName ? (dirName + '/') : '')+ entry.path,
-                contents: Buffer.concat(chunks)
-              });
-              self.push(file);
+      var buffer = [];
+      zipFile.on('data', function(d) { buffer.push(d); })
+      zipFile.on('end', function() {
+        var decompress = new Decompress();
+        decompress
+          .src(Buffer.concat(buffer))
+          .use(Decompress.zip())
+          .run(function(err, files) {
+            if(err) {
+              throw new PluginError(PLUGIN_NAME, err);
             }
-            cb()
-          }))
-        }).on('close', function(){
-          callback()
+            files.forEach(function(entry) {
+              var dirName, fileName, pathName, type, _ref, chunks = [];
+              pathName = entry.path;
+              entry.pipe(through2.obj(function (chunk, enc, cb) {
+                  chunks.push(chunk);
+                  cb();
+                },
+                function (cb) {
+                  if(chunks.length > 0){
+                    dirName = (_ref = path.dirname(pathName).match(/\/([^\/]*)$/)) != null ? _ref[1] : void 0;
+                    fileName = path.basename(pathName);
+                    entry.path = fileName;
+
+                    var file = new $.File({
+                      cwd : "./",
+                      path : (dirName ? (dirName + '/') : '')+ entry.path,
+                      contents: Buffer.concat(chunks)
+                    });
+                    self.push(file);
+                  }
+                  cb()
+              }));
+          });
+          callback();
         });
+      });
     });
 
     needle.post(
