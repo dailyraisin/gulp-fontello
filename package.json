@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gillbeits/gulp-fontello.git"
+    "url": "https://github.com/dailyraisin/gulp-fontello.git"
   },
   "dependencies": {
     "decompress": "^3.0.0",
     "gulp-util": "^3.0.4",
-    "needle": "git@github.com:dailyraisin/needle.git",
+    "needle": "https://github.com/dailyraisin/needle.git",
     "path": "^0.11.14",
     "through2": "^0.6.3"
   },
@@ -26,7 +26,7 @@
     "email": "gillbeits@gmail.com"
   },
   "bugs": {
-    "url": "https://github.com/gillbeits/gulp-fontello/issues"
+    "url": "https://github.com/dailyraisin/gulp-fontello/issues"
   },
-  "homepage": "https://github.com/gillbeits/gulp-fontello"
+  "homepage": "https://github.com/dailyraisin/gulp-fontello"
 }
