@@ -5,7 +5,7 @@
 var
   HOST        = 'http://fontello.com',
 
-  needle      = require('needle'),
+  needle      = require('needle-retry-x'),
   through2    = require('through2'),
   path        = require('path'),
   $           = require('gulp-util'),
