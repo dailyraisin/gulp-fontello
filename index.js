@@ -21,6 +21,7 @@ var needleOptions = {
 };
 
 const PLUGIN_NAME = 'gulp-fontello';
+var isWindows = /^win/.test(process.platform);
 
 function addMultipart (obj) {
     obj.multipart = true;
@@ -70,7 +71,15 @@ function fontello () {
                 function (cb) {
                   if(chunks.length > 0){
                     dirName = (_ref = path.dirname(pathName).match(/\/([^\/]*)$/)) != null ? _ref[1] : void 0;
-                    fileName = path.basename(pathName);
+
+                    if(isWindows) {
+                      fileName = path.posix.basename(pathName).split('\\');
+                      fileName.shift(); //removes temporary folder
+                      fileName = fileName.join('\\');
+                    } else {
+                      fileName = path.basename(pathName);
+                    }
+
                     entry.path = fileName;
 
                     var file = new $.File({
